@@ -11,3 +11,10 @@
 - APIの実行自動化
 - 外部プロバイダ認証、ASP.NET Core Authentication を使用
 
+# 準備
+
+以下、PMCから実行必要
+
+    Install-Package TMDbLib  
+    
+    
