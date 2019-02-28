@@ -7,26 +7,71 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MovieWebApp.Data;
 using MovieWebApp.Models;
+using TMDbLib.Client;
+using TMDbLib.Objects.General;
+using TMDbLib.Objects.Search;
 
 namespace MovieWebApp.Controllers
 {
-    public class AllController : Controller
+    public class MoviesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AllController(ApplicationDbContext context)
+        public MoviesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: All
-        public async Task<IActionResult> Index()
+        // GET: Movies
+        public async Task<IActionResult> Index(string category)
         {
+            var movies = from m in _context.Movie
+                         select m;
+
+            if (!String.IsNullOrEmpty(category))
+            {
+                movies = movies.Where(c => c.Category.Contains(category));
+                ViewData["Category"] = category;
+            }
+
+            TMDbClient client = new TMDbClient("f09a73af19214dae524285d17a966ec4");
+            SearchContainerWithDates<SearchMovie> results = client.GetMovieUpcomingListAsync("ja-jp").Result;
+            /*
+            foreach (SearchMovie tmdbMovie in results.Results)
+            {
+                var movie = await _context.Movie.FirstOrDefaultAsync(m => m.ID == tmdbMovie.Id);
+                if (movie == null)
+                {
+                    
+                    movie.Movieid = tmdbMovie.Id;
+                    movie.Title = tmdbMovie.Title;
+                    movie.ReleaseDate = (DateTime) tmdbMovie.ReleaseDate;
+                    movie.popularity = (decimal)tmdbMovie.Popularity;
+                    movie.vote_average = (decimal)tmdbMovie.VoteAverage;
+                    movie.Category = "Upcoming";
+                    
+                    _context.Add(movie);
+                }
+                else
+                {
+                    movie.Movieid = tmdbMovie.Id;
+                    movie.Title = tmdbMovie.Title;
+                    movie.ReleaseDate = (DateTime)tmdbMovie.ReleaseDate;
+                    movie.popularity = (decimal)tmdbMovie.Popularity;
+                    movie.vote_average = (decimal)tmdbMovie.VoteAverage;
+                    movie.Category = "Upcoming";
+                    _context.Update(movie);
+                }
+                await _context.SaveChangesAsync();
+            }
+            */
+            ViewData["TMDbTitle"] = results.Results[0].Title;
+            ViewData["Results"] = results.Results;
             
-            return View(await _context.Movie.ToListAsync());
+            return View(await movies.ToListAsync());
         }
 
-        // GET: All/Details/5
+        // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,13 +89,13 @@ namespace MovieWebApp.Controllers
             return View(movie);
         }
 
-        // GET: All/Create
+        // GET: Movies/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: All/Create
+        // POST: Movies/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -66,7 +111,7 @@ namespace MovieWebApp.Controllers
             return View(movie);
         }
 
-        // GET: All/Edit/5
+        // GET: Movies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,7 +127,7 @@ namespace MovieWebApp.Controllers
             return View(movie);
         }
 
-        // POST: All/Edit/5
+        // POST: Movies/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -117,7 +162,7 @@ namespace MovieWebApp.Controllers
             return View(movie);
         }
 
-        // GET: All/Delete/5
+        // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,7 +180,7 @@ namespace MovieWebApp.Controllers
             return View(movie);
         }
 
-        // POST: All/Delete/5
+        // POST: Movies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
