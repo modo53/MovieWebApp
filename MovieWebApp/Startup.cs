@@ -13,11 +13,13 @@ using Microsoft.EntityFrameworkCore;
 using MovieWebApp.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace MovieWebApp
 {
     public class Startup
     {
+        private string _TMDbApiKey = null;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -42,7 +44,17 @@ namespace MovieWebApp
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddAuthentication()
+                //.AddMicrosoftAccount(microsoftOptions => { ... })
+                .AddGoogle(googleOptions => {
+                    googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                });
+                //.AddTwitter(twitterOptions => { ... })
+                //.AddFacebook(facebookOptions => { ... });
+                 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            _TMDbApiKey = Configuration["TMDb:APIKey"];
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
