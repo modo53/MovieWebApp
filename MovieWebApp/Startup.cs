@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieWebApp.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.Google;
 
 namespace MovieWebApp
 {
@@ -49,10 +43,14 @@ namespace MovieWebApp
                 .AddGoogle(googleOptions => {
                     googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
                     googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-                });
-                //.AddTwitter(twitterOptions => { ... })
-                //.AddFacebook(facebookOptions => { ... });
-                 
+                })
+                .AddTwitter(twitterOptions => {
+                    twitterOptions.ConsumerKey = "7YvrfbI7HcLMJMD0DKlXuOt0e";
+                    twitterOptions.ConsumerSecret = "8cvitm64ZlPEhay1hkqspsttA0NEdU3PVvwY2OjkZPmN3uQ7Dh";
+                });          
+            
+            //.AddFacebook(facebookOptions => { ... });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             _TMDbApiKey = Configuration["TMDb:APIKey"];
         }
