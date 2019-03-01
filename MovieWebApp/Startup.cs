@@ -45,8 +45,8 @@ namespace MovieWebApp
                     googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
                 })
                 .AddTwitter(twitterOptions => {
-                    twitterOptions.ConsumerKey = "7YvrfbI7HcLMJMD0DKlXuOt0e";
-                    twitterOptions.ConsumerSecret = "8cvitm64ZlPEhay1hkqspsttA0NEdU3PVvwY2OjkZPmN3uQ7Dh";
+                    twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ClientId"];
+                    twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
                 });          
             
             //.AddFacebook(facebookOptions => { ... });
