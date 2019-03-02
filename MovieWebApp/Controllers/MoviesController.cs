@@ -6,21 +6,16 @@ using Microsoft.EntityFrameworkCore;
 using MovieWebApp.Data;
 using MovieWebApp.Models;
 using Microsoft.Extensions.Configuration;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Search;
 
 namespace MovieWebApp.Controllers
 {
     public class MoviesController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _configuration;
 
-        public MoviesController(ApplicationDbContext context, IConfiguration configuration)
+        public MoviesController(ApplicationDbContext context)
         {
             _context = context;
-            _configuration = configuration;
         }
 
         // GET: Movies
@@ -34,41 +29,10 @@ namespace MovieWebApp.Controllers
                 movies = movies.Where(c => c.Category.Contains(category));
                 ViewData["Category"] = category;
             }
-
-            TMDbClient client = new TMDbClient(_configuration["TMDb:APIKey"]);
-            SearchContainerWithDates<SearchMovie> results = client.GetMovieUpcomingListAsync("ja-jp").Result;
-            /*
-            foreach (SearchMovie tmdbMovie in results.Results)
+            else
             {
-                var getMovie = await _context.Movie.FirstOrDefaultAsync(m => m.ID == tmdbMovie.Id);
-                if (getMovie == null)
-                {
-
-                    getMovie.Movieid = tmdbMovie.Id;
-                    getMovie.Title = tmdbMovie.Title;
-                    getMovie.ReleaseDate = (DateTime) tmdbMovie.ReleaseDate;
-                    getMovie.popularity = (decimal)tmdbMovie.Popularity;
-                    getMovie.vote_average = (decimal)tmdbMovie.VoteAverage;
-                    getMovie.Category = "Upcoming";
-                    
-                    _context.Add(getMovie);
-                }
-                else
-                {
-                    getMovie.Movieid = tmdbMovie.Id;
-                    getMovie.Title = tmdbMovie.Title;
-                    getMovie.ReleaseDate = (DateTime)tmdbMovie.ReleaseDate;
-                    getMovie.popularity = (decimal)tmdbMovie.Popularity;
-                    getMovie.vote_average = (decimal)tmdbMovie.VoteAverage;
-                    getMovie.Category = "Upcoming";
-                    _context.Update(getMovie);
-                }
-                await _context.SaveChangesAsync();
+                ViewData["Category"] = "Index";
             }
-            */
-            ViewData["TMDbTitle"] = results.Results[0].Title;
-            ViewData["Results"] = results.Results;
-            
             return View(await movies.ToListAsync());
         }
 
@@ -196,5 +160,6 @@ namespace MovieWebApp.Controllers
         {
             return _context.Movie.Any(e => e.ID == id);
         }
+
     }
 }
