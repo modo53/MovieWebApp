@@ -13,7 +13,8 @@ namespace MovieWebApp
 {
     public class Startup
     {
-        private string _TMDbApiKey = null;
+        private string _moviesApiKey = null;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -49,10 +50,10 @@ namespace MovieWebApp
                     twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
                 });          
             
-            //.AddFacebook(facebookOptions => { ... });
+                //.AddFacebook(facebookOptions => { ... });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            _TMDbApiKey = Configuration["TMDb:APIKey"];
+            _moviesApiKey = Configuration["Movies:ServiceApiKey"];
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
