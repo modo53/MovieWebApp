@@ -39,10 +39,13 @@ namespace MovieWebApp
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication()
-                //.AddMicrosoftAccount(microsoftOptions => { ... })
                 .AddGoogle(googleOptions => {
                     googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
                     googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                })
+                .AddMicrosoftAccount(microsoftOptions => {
+                    microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ClientId"];
+                    microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
                 })
                 .AddTwitter(twitterOptions => {
                     twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ClientId"];
