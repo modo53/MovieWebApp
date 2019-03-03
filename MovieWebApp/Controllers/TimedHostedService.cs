@@ -43,11 +43,12 @@ namespace MovieWebApp.Controllers
         private async void DoWork(object state)
         {
             _logger.LogInformation("Timed Background Service is working.");
-            TMDbClient tClient = new TMDbClient(_configuration["TMDb:APIKey"]);
+
             using (var scope = _scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                UpdateMoviesController updater = new UpdateMoviesController(context);
+                UpdateMoviesController updater = new UpdateMoviesController(context, _configuration);
+                TMDbClient tClient = updater.GetTMDbClient();
                 await updater.GeTMDbMovie(tClient);
             }
 

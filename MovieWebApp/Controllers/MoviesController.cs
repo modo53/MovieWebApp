@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieWebApp.Data;
 using MovieWebApp.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace MovieWebApp.Controllers
 {

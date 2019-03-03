@@ -19,6 +19,8 @@ namespace MovieWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private TMDbClient _tClient;
+
 
         public UpdateMoviesController(ApplicationDbContext context, IConfiguration configuration)
         {
@@ -26,17 +28,21 @@ namespace MovieWebApp.Controllers
             _configuration = configuration;
         }
 
-        public UpdateMoviesController(ApplicationDbContext context)
+        public TMDbClient GetTMDbClient()
         {
-            _context = context;
+            if (null == _tClient)
+            {
+                _tClient = new TMDbClient(_configuration["TMDb:APIKey"]);
+            }
+            
+            return _tClient;
         }
 
         // GET: api/UpdateMovies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovie()
         {
-            TMDbClient tClient = new TMDbClient(_configuration["TMDb:APIKey"]);
-            await GeTMDbMovie(tClient);
+            await GeTMDbMovie(GetTMDbClient());
             return await _context.Movie.ToListAsync();
         }
 
