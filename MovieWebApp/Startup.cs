@@ -8,13 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using MovieWebApp.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MovieWebApp.Controllers;
 
 namespace MovieWebApp
 {
     public class Startup
     {
-        private string _moviesApiKey = null;
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -48,12 +47,12 @@ namespace MovieWebApp
                 .AddTwitter(twitterOptions => {
                     twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ClientId"];
                     twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
-                });          
-            
-                //.AddFacebook(facebookOptions => { ... });
+                });
+
+            //.AddFacebook(facebookOptions => { ... });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            _moviesApiKey = Configuration["Movies:ServiceApiKey"];
+            services.AddHostedService<TimedHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

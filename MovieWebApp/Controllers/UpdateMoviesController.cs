@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,22 @@ namespace MovieWebApp.Controllers
             _configuration = configuration;
         }
 
+        public UpdateMoviesController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/UpdateMovies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovie()
         {
             TMDbClient tClient = new TMDbClient(_configuration["TMDb:APIKey"]);
+            await GeTMDbMovie(tClient);
+            return await _context.Movie.ToListAsync();
+        }
+
+        public async Task GeTMDbMovie(TMDbClient tClient)
+        {
             try
             {
                 await StoreUpcommingData(tClient);
@@ -48,8 +60,10 @@ namespace MovieWebApp.Controllers
             {
                 throw;
             }
-            return await _context.Movie.ToListAsync();
+            return;
+
         }
+
         private async Task StorePopularData(TMDbClient client)
         {
             if (client == null)
@@ -113,5 +127,6 @@ namespace MovieWebApp.Controllers
             }
             await _context.SaveChangesAsync();
         }
+
     }
 }
