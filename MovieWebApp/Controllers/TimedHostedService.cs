@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,7 +6,6 @@ using MovieWebApp.Data;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TMDbLib.Client;
 
 namespace MovieWebApp.Controllers
 {
@@ -48,8 +46,7 @@ namespace MovieWebApp.Controllers
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 UpdateMoviesController updater = new UpdateMoviesController(context, _configuration);
-                TMDbClient tClient = updater.GetTMDbClient();
-                await updater.GeTMDbMovie(tClient);
+                await updater.GetTMDbMovie(updater.GetTMDbClient());
             }
 
         }

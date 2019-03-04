@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MovieWebApp.Data;
+using MovieWebApp.Library;
 using MovieWebApp.Models;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Search;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MovieWebApp.Controllers
 {
@@ -19,8 +15,7 @@ namespace MovieWebApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
-        private TMDbClient _tClient;
-
+        private TmdbClientLib _tmdbClient;
 
         public UpdateMoviesController(ApplicationDbContext context, IConfiguration configuration)
         {
@@ -28,31 +23,33 @@ namespace MovieWebApp.Controllers
             _configuration = configuration;
         }
 
-        public TMDbClient GetTMDbClient()
+        public TmdbClientLib GetTMDbClient()
         {
-            if (null == _tClient)
+            if (null == _tmdbClient)
             {
-                _tClient = new TMDbClient(_configuration["TMDbAPIKey"]);
+                _tmdbClient = new TmdbClientLib(_configuration["TMDbAPIKey"]);
             }
             
-            return _tClient;
+            return _tmdbClient;
         }
 
         // GET: api/UpdateMovies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetMovie()
         {
-            await GeTMDbMovie(GetTMDbClient());
+            await GetTMDbMovie(GetTMDbClient());
             return await _context.Movie.ToListAsync();
         }
 
-        public async Task GeTMDbMovie(TMDbClient tClient)
+        public async Task GetTMDbMovie(TmdbClientLib tmdbClient)
         {
             try
             {
-                await StoreUpcommingData(tClient);
-                await StorePopularData(tClient);
-                await StoreTopRatedData(tClient);
+                List<Movie> movies = new List<Movie>();
+                movies.AddRange(tmdbClient.getMovies("Popular"));
+                movies.AddRange(tmdbClient.getMovies("TopRated"));
+                movies.AddRange(tmdbClient.getMovies("Upcoming"));
+                await MovieTableUpdate(movies);
             }
             catch (System.AggregateException)
             {
@@ -70,65 +67,30 @@ namespace MovieWebApp.Controllers
 
         }
 
-        private async Task StorePopularData(TMDbClient client)
+        private async Task MovieTableUpdate(List<Movie> movies)
         {
-            if (client == null)
+            if (movies == null)
             {
                 return;
             }
-            SearchContainer<SearchMovie> results = client.GetMoviePopularListAsync("ja-jp").Result;
-            await DbTableUpdate(searchMovieResult: results, category: "Popular");
-
-        }
-        private async Task StoreTopRatedData(TMDbClient client)
-        {
-            if (client == null)
+            foreach (Movie movie in movies)
             {
-                return;
-            }
-            SearchContainer<SearchMovie> results = client.GetMovieTopRatedListAsync("ja-jp").Result;
-            await DbTableUpdate(searchMovieResult: results, category: "TopRated");
-
-        }
-        private async Task StoreUpcommingData(TMDbClient client)
-        {
-            if (client == null)
-            {
-                return;
-            }
-            SearchContainerWithDates<SearchMovie> results = client.GetMovieUpcomingListAsync("ja-jp").Result;
-            await DbTableUpdate(searchMovieResult: results, category: "Upcoming");
-
-        }
-        private async Task DbTableUpdate(SearchContainer<SearchMovie> searchMovieResult, string category = "no category")
-        {
-            if (searchMovieResult == null)
-            {
-                return;
-            }
-            foreach (SearchMovie tmdbMovie in searchMovieResult.Results)
-            {
-                Movie apiUpdateMovies = await _context.Movie.FirstOrDefaultAsync(m => m.Movieid == tmdbMovie.Id);
-                if (apiUpdateMovies == null)
+                Movie apiUpdateMovie = await _context.Movie.FirstOrDefaultAsync(m => m.Movieid == movie.Movieid);
+                if (apiUpdateMovie == null)
                 {
-                    Movie apiAddMovies = new Movie();
-                    apiAddMovies.Movieid = tmdbMovie.Id;
-                    apiAddMovies.Title = tmdbMovie.Title;
-                    apiAddMovies.ReleaseDate = (DateTime)tmdbMovie.ReleaseDate;
-                    apiAddMovies.popularity = (decimal)tmdbMovie.Popularity;
-                    apiAddMovies.vote_average = (decimal)tmdbMovie.VoteAverage;
-                    apiAddMovies.Category = category;
-                    _context.Add(apiAddMovies);
+
+                    _context.Add(movie);
                 }
                 else
                 {
-                    apiUpdateMovies.Movieid = tmdbMovie.Id;
-                    apiUpdateMovies.Title = tmdbMovie.Title;
-                    apiUpdateMovies.ReleaseDate = (DateTime)tmdbMovie.ReleaseDate;
-                    apiUpdateMovies.popularity = (decimal)tmdbMovie.Popularity;
-                    apiUpdateMovies.vote_average = (decimal)tmdbMovie.VoteAverage;
-                    apiUpdateMovies.Category = category;
-                    _context.Update(apiUpdateMovies);
+                    apiUpdateMovie.Movieid = movie.Movieid;
+                    apiUpdateMovie.Title = movie.Title;
+                    apiUpdateMovie.ReleaseDate = movie.ReleaseDate;
+                    apiUpdateMovie.popularity = movie.popularity;
+                    apiUpdateMovie.vote_average = movie.vote_average;
+                    apiUpdateMovie.Category = movie.Category;
+                    _context.Update(apiUpdateMovie);
+
                 }
             }
             await _context.SaveChangesAsync();
