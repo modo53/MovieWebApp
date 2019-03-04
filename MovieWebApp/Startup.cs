@@ -33,23 +33,23 @@ namespace MovieWebApp
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("AzureConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddGoogle(googleOptions => {
-                    googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
-                    googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                    googleOptions.ClientId = Configuration["AuthenticationGoogleClientId"];
+                    googleOptions.ClientSecret = Configuration["AuthenticationGoogleClientSecret"];
                 })
                 .AddMicrosoftAccount(microsoftOptions => {
-                    microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ClientId"];
-                    microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
+                    microsoftOptions.ClientId = Configuration["AuthenticationMicrosoftClientId"];
+                    microsoftOptions.ClientSecret = Configuration["AuthenticationMicrosoftClientSecret"];
                 })
                 .AddTwitter(twitterOptions => {
-                    twitterOptions.ConsumerKey = Configuration["Authentication:Twitter:ClientId"];
-                    twitterOptions.ConsumerSecret = Configuration["Authentication:Twitter:ClientSecret"];
+                    twitterOptions.ConsumerKey = Configuration["AuthenticationTwitterClientId"];
+                    twitterOptions.ConsumerSecret = Configuration["AuthenticationTwitterClientSecret"];
                 });
 
             //.AddFacebook(facebookOptions => { ... });

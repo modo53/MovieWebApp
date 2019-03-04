@@ -32,7 +32,7 @@ namespace MovieWebApp.Controllers
         {
             if (null == _tClient)
             {
-                _tClient = new TMDbClient(_configuration["TMDb:APIKey"]);
+                _tClient = new TMDbClient(_configuration["TMDbAPIKey"]);
             }
             
             return _tClient;
