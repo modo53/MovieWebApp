@@ -6,7 +6,7 @@ ASP.NET Core MVC によるWebアプリケーションです。
 
 ## 概要
 
-ASP.net core 2.2.1 を利用しています。
+ASP.net core 2.2.2 を利用しています。
 
 ### カテゴリについて
 
