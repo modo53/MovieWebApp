@@ -76,8 +76,15 @@ https://moviewebapp20190303075609.azurewebsites.net/
 
 ### 手順
 
-- appsettings.jsonにConnectionStringsの中にAzureConnectionを追加  
-- DefaultConnection から AzureConnection にする  
+- SQL Server インスタンス を Azure に作成する
+	- 名前、ネームスペース、ホスト、プランなど設定
+	- DBサーバー名、管理するUser、パスワードの設定
+- 作成後に接続情報を確認する
+- 接続情報をコピーして、プロジェクトのappsettings.jsonにあるConnectionStringsの中にDefaultConnectionと同列にAzureConnectionを追加  
+- Startup.csのConfigureServicesメソッドでのDB参照先を変更する
+    - "services.AddDbContext<ApplicationDbContext>" の参照先を確認する
+    - DefaultConnection から AzureConnection にしてビルド
+- SQL Server オブジェクトエクスプローラーから確認
 - PMCから Update-Database を実行してテーブルの作成を確認する  
 - ローカルのWebサーバーを起動してAzure側のSQL ServerのDBへの参照と書き込みを確認する  
 - 認証用のテーブルも空になるので、ユーザー登録とログインの確認を行う  
