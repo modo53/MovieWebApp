@@ -97,7 +97,9 @@ https://moviewebapp20190303075609.azurewebsites.net/
 
 - VisualStudio2017のプロジェクトタイトルからVaultを有効にする  
 - secrets.json に記載しているKeyValueをVaultに再設定する  
-  - Valueの仕様上、Keyの値には:を使えないので注意する  
+  - ローカルとドメインが変わるので、Azure用のクライアント情報を取得して設定する必要あり
+  - Valueの仕様上、Keyの値には:を使えないので注意する
+
 
 ## 3. AzureのSQL Serverに移行後にAppServiceにPublish（発行）する  
 
