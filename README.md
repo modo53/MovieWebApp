@@ -70,9 +70,11 @@ https://moviewebapp20190303075609.azurewebsites.net/
 
 このアプリケーションをVisualStudio2017からAzureに公開する手順の概要は以下となります。
 
-1. プロジェクトで利用するDBの接続先をLocalSQL ServerからAzureのSQL Serverに変更する  
+## 1. プロジェクトで利用するDBの接続先をLocalSQL ServerからAzureのSQL Serverに変更する  
 
 ローカル環境のプロジェクトからAzureのSQL Serverに接続します。
+
+### 手順
 
 - appsettings.jsonにConnectionStringsの中にAzureConnectionを追加  
 - DefaultConnection から AzureConnection にする  
@@ -80,15 +82,19 @@ https://moviewebapp20190303075609.azurewebsites.net/
 - ローカルのWebサーバーを起動してAzure側のSQL ServerのDBへの参照と書き込みを確認する  
 - 認証用のテーブルも空になるので、ユーザー登録とログインの確認を行う  
 
-2. プロジェクトで利用するsecretManagerをVaultに移行する  
+## 2. プロジェクトで利用するsecretManagerをVaultに移行する  
 
-ローカルのseacrets.jsonで管理しているAPIキーなどのSeacret情報をVaultに移行します。  
+ローカルのseacrets.jsonで管理しているAPIキーなどのSeacret情報をVaultに移行します。 
+
+### 手順
 
 - VisualStudio2017のプロジェクトタイトルからVaultを有効にする  
 - secrets.json に記載しているKeyValueをVaultに再設定する  
   - Valueの仕様上、Keyの値には:を使えないので注意する  
 
-3. AzureのSQL Serverに移行後にAppServiceにPublish（発行）する  
+## 3. AzureのSQL Serverに移行後にAppServiceにPublish（発行）する  
+
+### 手順
 
 ビルドしたプロジェクトをAppServiceに発行します。
 
