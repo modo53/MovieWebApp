@@ -11,15 +11,15 @@ namespace MovieWebApp.Library
     {
         private TMDbClient _tClient;
 
-        public TmdbClientLib(string apikey)
+        public TmdbClientLib(TMDbClient tClient)
         {
             if (null == _tClient)
             {
-                _tClient = new TMDbClient(apikey);
+                _tClient = tClient;
             }
         }
 
-        public List<Movie> getMovies(string category = "Popular")
+        public virtual List<Movie> getMovies(string category = "Popular")
         {
             List<Movie> movies = new List<Movie>();
             SearchContainer<SearchMovie> results = null;

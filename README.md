@@ -64,9 +64,11 @@ TMDbLib 1.0.0  https://github.com/LordMike/TMDbLib
 
 # Azureでの公開について  
 
-本WebアプリケーションはAzure WebServiceで公開しています。
+~~本WebアプリケーションはAzure WebServiceで公開しています。~~  
 
-https://moviewebapp20190303075609.azurewebsites.net/ 
+//2019-03-23 無料クレジットの期限が切れました。。  公開終了
+
+~~https://moviewebapp20190303075609.azurewebsites.net/ ~~  
 
 このアプリケーションをVisualStudio2017からAzureに公開する手順の概要は以下となります。
 
@@ -116,9 +118,24 @@ https://moviewebapp20190303075609.azurewebsites.net/
 
 以下、初めてC#＋VisualStudio＋Azureで作ってみた感想です。
 
-- テストが作れてない
-	- APIクライアント用のlibraryをリファクタする時に作りたかった
- 	    - ASP.NET CoreとMVCの仕様と、調査に時間に使ってしまって。。
+- ~~テストが作れてない~~
+	- ~~APIクライアント用のlibraryをリファクタする時に作りたかった~~   
+ 	    - ~~ASP.NET CoreとMVCの仕様と、調査に時間に使ってしまって。。~~    
+	- //2019-03-23 テストを作りました →  UnitTestProject1
+		- コントローラーの主要なアクションでの以下のロジックに着目した内容のテストです
+			- API実行とデータ変換
+			- DBへの書き込み
+			- DBから参照したデータをViewに渡せていること
+			- 想定したModelでRead/Writeできていること
+		- テストで悩んだこと
+			- テスト用のDBをどうするか？
+				- InMemoryのDBを使えたので楽できた
+			- assertでList<T>のデータを比較する方法が標準で存在しなかった
+				- 個別に比較用クラスを作る必要があり、あまり楽できなかった
+			- どの部分をDI化するか？
+				- Configureの実物をテストに渡したくないので極力secretな情報に関連する部分をDI化していった
+				- contextはInMemoryDBを利用することで解決
+				- 外部APIを利用するオブジェクトについてはテスト側でMock化したものを渡せる構成に直した
 - 普段使うGCPとPythonがこのプロジェクトと混在してパニックになる
     - 頭の切り替えが大変
 - gitでブランチ作ってない。

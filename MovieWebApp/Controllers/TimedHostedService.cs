@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MovieWebApp.Data;
+using MovieWebApp.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -46,7 +48,11 @@ namespace MovieWebApp.Controllers
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 UpdateMoviesController updater = new UpdateMoviesController(context, _configuration);
-                await updater.GetTMDbMovie(updater.GetTMDbClient());
+                List<Movie> movies = new List<Movie>();
+                movies = updater.GetTMDbMovieFromApi(movies,"Popular");
+                movies = updater.GetTMDbMovieFromApi(movies,"TopRated");
+                movies = updater.GetTMDbMovieFromApi(movies,"Upcoming");
+                await updater.MovieTableUpdate(movies);
             }
 
         }
